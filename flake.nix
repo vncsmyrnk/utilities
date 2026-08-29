@@ -85,7 +85,7 @@
       };
 
       utilities = pkgs.symlinkJoin {
-        name = "collection";
+        name = "utilities-collection";
         paths = [
           gitWorktreeCd
           sopsExecEnv
