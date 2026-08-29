@@ -84,6 +84,25 @@
         rbackup = rbackup.packages.${system}.default;
       };
 
+      utilitiesWrapperFixture = pkgs.stdenvNoCC.mkDerivation {
+        pname = "utilities-wrapper-fixture";
+        version = "1.2.3";
+        dontUnpack = true;
+        nativeBuildInputs = [ pkgs.makeUtilitiesWrapper ];
+        installPhase = ''
+          install -Dm755 ${pkgs.writeShellScript "utilities-wrapper-fixture" ''
+            printf '%s\n' "$CURRENT_PATH"
+          ''} $out/bin/utilities-wrapper-fixture
+          wrapProgram $out/bin/utilities-wrapper-fixture
+        '';
+      };
+
+      currentPathFixture = pkgs.wrapUseCurrentPath (
+        pkgs.writeShellScriptBin "current-path-fixture" ''
+          printf '%s\n' "$PATH"
+        ''
+      );
+
       utilities = pkgs.symlinkJoin {
         name = "utilities-collection";
         paths = [
@@ -117,5 +136,23 @@
     {
       packages.${system}.default = utilities;
       devShells.${system}.default = devShell;
+      checks.${system} = {
+        makeUtilitiesWrapper = pkgs.runCommand "make-utilities-wrapper-check" { } ''
+          test "$(${utilitiesWrapperFixture}/bin/utilities-wrapper-fixture -V)" = \
+            "utilities-wrapper-fixture 1.2.3"
+          test "$(${utilitiesWrapperFixture}/bin/utilities-wrapper-fixture --version)" = \
+            "utilities-wrapper-fixture 1.2.3"
+          test "$(PATH=/test/current-path \
+            ${utilitiesWrapperFixture}/bin/utilities-wrapper-fixture)" = \
+            "/test/current-path"
+          touch "$out"
+        '';
+
+        wrapUseCurrentPath = pkgs.runCommand "wrap-use-current-path-check" { } ''
+          test "$(CURRENT_PATH=/test/current-path \
+            ${currentPathFixture}/bin/current-path-fixture)" = "/test/current-path"
+          touch "$out"
+        '';
+      };
     };
 }
