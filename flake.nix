@@ -67,7 +67,6 @@
         ];
       };
 
-      gitWorktreeCd = pkgs.callPackage ./src/git-worktree-cd { };
       sopsExecEnv = pkgs.callPackage ./src/sops-exec-env { };
       sopsEdit = pkgs.callPackage ./src/sops-edit { };
       tmuxJobRun = pkgs.callPackage ./src/tmux-job-run { };
@@ -106,7 +105,6 @@
       utilities = pkgs.symlinkJoin {
         name = "utilities-collection";
         paths = [
-          gitWorktreeCd
           sopsExecEnv
           sopsEdit
           tmuxJobRun
