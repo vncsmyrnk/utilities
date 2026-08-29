@@ -48,9 +48,7 @@
                   ''
                 );
 
-            # Wraps a package's binaries to restore CURRENT_PATH as PATH, so
-            # they run with the caller's environment instead of the pinned one.
-            wrapCurrentPath =
+            wrapUseCurrentPath =
               pkg:
               final.runCommand "${pkg.pname or pkg.name}-current-path"
                 {
@@ -64,7 +62,7 @@
                   done
                 '';
 
-            sops = final.wrapCurrentPath prev.sops;
+            sops = final.wrapUseCurrentPath prev.sops;
           })
         ];
       };
