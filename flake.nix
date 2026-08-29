@@ -22,21 +22,25 @@
             mount = final.sudo prev.mount;
             umount = final.sudo prev.umount;
 
-            # Overrides wrapProgram to always export CURRENT_PATH (the caller's
-            # PATH) before the wrapper pins its own PATH.
-            utilsWrapHook =
+            makeUtilitiesWrapper =
               final.makeSetupHook
                 {
-                  name = "utils-wrap-hook";
+                  name = "wrap-hook";
                   propagatedBuildInputs = [ final.makeWrapper ];
                 }
                 (
-                  final.writeText "utils-wrap-hook.sh" ''
+                  final.writeText "wrap-hook.sh" ''
                     overrideWrapProgram() {
                       eval "_orig_$(declare -f wrapProgram)"
                       wrapProgram() {
+                        local versionCommand=""
+                        printf -v versionCommand \
+                          'case "''${1-}" in -V|--version) printf "%%s %%s\n" %q %q; exit 0 ;; esac' \
+                          "$pname" "$version"
+
                         _orig_wrapProgram "$1" \
                           --run 'export CURRENT_PATH="$PATH"' \
+                          ''${versionCommand:+--run "$versionCommand"} \
                           "''${@:2}"
                       }
                     }
