@@ -8,9 +8,4 @@ if [[ -z "$command" ]]; then
   exit 1
 fi
 
-_sops="$(command -v sops)"
-sops() {
-  PATH="${CURRENT_PATH:-"$PATH"}" "$_sops" "$@"
-}
-
 sops exec-env "$CONFIG_PATH/default.env" "$command"

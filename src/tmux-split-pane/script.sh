@@ -2,11 +2,6 @@
 # vim: set ft=sh:
 set -eou pipefail
 
-_tmux="$(command -v tmux)"
-tmux() {
-  PATH="${CURRENT_PATH:-"$PATH"}" "$_tmux" "$@"
-}
-
 if ! current_pane_id=$(tmux list-panes -F '#{pane_id}' -f '#{m:1,#{pane_active}}'); then
   echo "failed to fetch current pane id." >&2
 fi

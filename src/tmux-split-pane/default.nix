@@ -24,7 +24,6 @@ stdenvNoCC.mkDerivation {
     patchShebangs .
     install -Dm755 ${./script.sh} $out/bin/tmux-split-pane
     wrapProgram $out/bin/tmux-split-pane \
-      --run 'export CURRENT_PATH="$PATH"' \
       --set PATH ${
         lib.makeBinPath [
           pkgs.tmux

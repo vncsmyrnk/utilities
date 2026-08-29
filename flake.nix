@@ -21,6 +21,46 @@
             cryptsetup = final.sudo prev.cryptsetup;
             mount = final.sudo prev.mount;
             umount = final.sudo prev.umount;
+
+            # Overrides wrapProgram to always export CURRENT_PATH (the caller's
+            # PATH) before the wrapper pins its own PATH.
+            utilsWrapHook =
+              final.makeSetupHook
+                {
+                  name = "utils-wrap-hook";
+                  propagatedBuildInputs = [ final.makeWrapper ];
+                }
+                (
+                  final.writeText "utils-wrap-hook.sh" ''
+                    overrideWrapProgram() {
+                      eval "_orig_$(declare -f wrapProgram)"
+                      wrapProgram() {
+                        _orig_wrapProgram "$1" \
+                          --run 'export CURRENT_PATH="$PATH"' \
+                          "''${@:2}"
+                      }
+                    }
+                    postHooks+=(overrideWrapProgram)
+                  ''
+                );
+
+            # Wraps a package's binaries to restore CURRENT_PATH as PATH, so
+            # they run with the caller's environment instead of the pinned one.
+            wrapCurrentPath =
+              pkg:
+              final.runCommand "${pkg.pname or pkg.name}-current-path"
+                {
+                  nativeBuildInputs = [ final.makeWrapper ];
+                }
+                ''
+                  mkdir -p $out/bin
+                  for bin in ${final.lib.getBin pkg}/bin/*; do
+                    makeWrapper "$bin" "$out/bin/$(basename "$bin")" \
+                      --run 'export PATH="''${CURRENT_PATH:-$PATH}"'
+                  done
+                '';
+
+            sops = final.wrapCurrentPath prev.sops;
           })
         ];
       };
