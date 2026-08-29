@@ -11,7 +11,7 @@ stdenvNoCC.mkDerivation {
   src = ./.;
   nativeBuildInputs = with pkgs; [
     installShellFiles
-    makeWrapper
+    makeUtilitiesWrapper
   ];
 
   doCheck = true;
