@@ -80,6 +80,7 @@
       cryptsetupMount = pkgs.callPackage ./src/cryptsetup-mount { };
       cryptsetupUmount = pkgs.callPackage ./src/cryptsetup-umount { };
       cryptsetupStow = pkgs.callPackage ./src/cryptsetup-stow { };
+      cryptsetupList = pkgs.callPackage ./src/cryptsetup-list { };
       gpgKeyBackup = pkgs.callPackage ./src/gpg-key-backup {
         rbackup = rbackup.packages.${system}.default;
       };
@@ -119,6 +120,7 @@
           cryptsetupMount
           cryptsetupUmount
           cryptsetupStow
+          cryptsetupList
           gpgKeyBackup
         ];
       };
