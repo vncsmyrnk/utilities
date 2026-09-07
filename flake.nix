@@ -81,6 +81,7 @@
       cryptsetupUmount = pkgs.callPackage ./src/cryptsetup-umount { };
       cryptsetupStow = pkgs.callPackage ./src/cryptsetup-stow { };
       cryptsetupList = pkgs.callPackage ./src/cryptsetup-list { };
+      gnomeExtensionsReload = pkgs.callPackage ./src/gnome-extensions-reload { };
       gpgKeyBackup = pkgs.callPackage ./src/gpg-key-backup {
         rbackup = rbackup.packages.${system}.default;
       };
@@ -121,6 +122,7 @@
           cryptsetupUmount
           cryptsetupStow
           cryptsetupList
+          gnomeExtensionsReload
           gpgKeyBackup
         ];
       };
