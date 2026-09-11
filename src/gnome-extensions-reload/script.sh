@@ -58,6 +58,10 @@ fi
 extensions_result=$(gnome-extensions list)
 if [[ "$all" = true ]] || [[ "$_grep_filter" != "$GREP_FILTER" ]]; then
   mapfile -t extensions < <(grep "$_grep_filter" <<<"$extensions_result")
+  if [[ -z "${extensions[*]}" ]]; then
+    echo "no extension found with the current filter." >&2
+    exit 1
+  fi
 else
   if ! grep -qx "$1" <<<"$extensions_result"; then
     echo "no extension found." >&2
