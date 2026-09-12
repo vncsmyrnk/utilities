@@ -64,6 +64,11 @@ if ! mountpoint=$(
   exit 1
 fi
 
+if [[ -z "$mountpoint" ]]; then
+  echo "device is not mounted."
+  exit 1
+fi
+
 _stow+=(
   'stow' "${stow_flags[@]}" '-d' "$mountpoint"
   '-t' "$stow_target" '.'
