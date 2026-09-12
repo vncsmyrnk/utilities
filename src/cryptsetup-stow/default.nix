@@ -6,7 +6,7 @@
 
 stdenvNoCC.mkDerivation {
   pname = "cryptsetup-stow";
-  version = "0.1.2";
+  version = "0.1.3";
 
   src = ./.;
   nativeBuildInputs = with pkgs; [

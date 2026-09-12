@@ -11,20 +11,7 @@ EOF
   )
 }
 
-stow() {
-  if output=$(command stow "$@" 2>&1); then
-    return
-  fi
-  mapfile conflicting_files -t < <(grep -oP '[ ]+\* cannot stow \K.+(?= over existing target .+ since neither a link nor a directory and --adopt not specified)' <<<"$output")
-  if [[ -z "${conflicting_files[*]}" ]]; then
-    echo "$output"
-    return 1
-  fi
-  printf "%s" "${conflicting_files[@]}"
-  return 1
-}
-
-src=
+src=""
 while [[ $# -gt 0 ]]; do
   case $1 in
   -D | --delete)
@@ -73,13 +60,18 @@ _stow+=(
   'stow' "${stow_flags[@]}" '-d' "$mountpoint"
   '-t' "$stow_target" '.'
 )
-if ! conflicts=$("${_stow[@]}" 2>&1); then
+if ! stow_output=$("${_stow[@]}" 2>&1); then
+  mapfile conflicting_files -t < <(grep -oP '[ ]+\* cannot stow \K.+(?= over existing target .+ since neither a link nor a directory and --adopt not specified)' <<<"$stow_output")
+  if [[ -z "${conflicting_files[*]}" ]]; then
+    printf "%s" "${conflicting_files[@]}" >&2
+    exit 1
+  fi
   tmp=$(mktemp -d -t utilities-cryptsetup-stow-conflicting.XXXX)
   while read -r conflict; do
     file="$stow_target/$conflict"
     cp --parents "$file" "$tmp"
     rm -f "$file"
-  done < <(grep -oP ".+$mountpoint/\K.+" <<<"$conflicts")
-  echo "conflicting files moved to $tmp." >&2
+  done < <(grep -oP ".+$mountpoint/\K.+" <<<"$conflicting_files")
+  echo "conflicting files moved to $tmp. Retrying." >&2
   "${_stow[@]}"
 fi
