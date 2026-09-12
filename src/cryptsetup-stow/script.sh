@@ -2,6 +2,15 @@
 # vim: set ft=sh:
 set -eou pipefail
 
+usage() {
+  echo "usage: $0 [name] [options]"
+  column -t -s '|' < <(
+    cat <<EOF
+|-D,--delete|unstows target
+EOF
+  )
+}
+
 stow() {
   if output=$(command stow "$@" 2>&1); then
     return
@@ -21,6 +30,10 @@ while [[ $# -gt 0 ]]; do
   -D | --delete)
     stow_flags+=("-D")
     shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
     ;;
   --)
     shift
