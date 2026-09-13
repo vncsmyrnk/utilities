@@ -5,9 +5,12 @@
 
 stdenvNoCC.mkDerivation {
   pname = "gnome-extensions-reload";
-  version = "0.1.1";
+  version = "0.1.2";
 
   src = ./.;
+  nativeBuildInputs = with pkgs; [
+    makeUtilitiesWrapper
+  ];
 
   doCheck = true;
   checkInputs = with pkgs; [
@@ -20,5 +23,6 @@ stdenvNoCC.mkDerivation {
   installPhase = ''
     patchShebangs .
     install -Dm755 ./script.sh $out/bin/gnome-extensions-reload
+    wrapProgram $out/bin/gnome-extensions-reload
   '';
 }
