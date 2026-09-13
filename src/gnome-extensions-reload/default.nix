@@ -5,7 +5,7 @@
 
 stdenvNoCC.mkDerivation {
   pname = "gnome-extensions-reload";
-  version = "0.1.2";
+  version = "0.1.3";
 
   src = ./.;
   nativeBuildInputs = with pkgs; [

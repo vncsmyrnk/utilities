@@ -55,14 +55,24 @@ if [[ -z "${1:-}" ]] && [[ "$all" = false ]] && [[ "$_grep_filter" = "$GREP_FILT
   exit 1
 fi
 
+re_grep_good_input='^[A-Za-z0-9.@][A-Za-z0-9.@-]+[A-Za-z]$'
+
 extensions_result=$(gnome-extensions list)
 if [[ "$all" = true ]] || [[ "$_grep_filter" != "$GREP_FILTER" ]]; then
+  if [[ ! "$_grep_filter" =~ $re_grep_good_input ]]; then
+    echo "bad filter." >&2
+    exit 1
+  fi
   mapfile -t extensions < <(grep "$_grep_filter" <<<"$extensions_result")
   if [[ -z "${extensions[*]}" ]]; then
     echo "no extension found with the current filter." >&2
     exit 1
   fi
 else
+  if [[ ! "$1" =~ $re_grep_good_input ]]; then
+    echo "bad filter." >&2
+    exit 1
+  fi
   if ! grep -qx "$1" <<<"$extensions_result"; then
     echo "no extension found." >&2
     exit 1
