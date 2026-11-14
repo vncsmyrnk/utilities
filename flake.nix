@@ -77,6 +77,7 @@
       tmuxSplitPane = pkgs.callPackage ./src/tmux-split-pane { };
       oathtoolTotpGenerate = pkgs.callPackage ./src/oathtool-totp-generate { };
       oathtoolTotpList = pkgs.callPackage ./src/oathtool-totp-list { };
+      oathtoolTotpAdd = pkgs.callPackage ./src/oathtool-totp-add { };
       cryptsetupMount = pkgs.callPackage ./src/cryptsetup-mount { };
       cryptsetupUmount = pkgs.callPackage ./src/cryptsetup-umount { };
       cryptsetupStow = pkgs.callPackage ./src/cryptsetup-stow { };
@@ -118,6 +119,7 @@
           tmuxSplitPane
           oathtoolTotpGenerate
           oathtoolTotpList
+          oathtoolTotpAdd
           cryptsetupMount
           cryptsetupUmount
           cryptsetupStow
