@@ -56,6 +56,15 @@ if [[ -z "$mountpoint" ]]; then
   exit 1
 fi
 
+if fuser -s -m "$mountpoint"; then
+  fuser -v -m "$mountpoint"
+  read -r -p "kill and procceed? (y/N) " answer
+  if [[ ! "$answer" =~ ^([Yy])$ ]]; then
+    exit 1
+  fi
+  fuser -s -m "$mountpoint" -k
+fi
+
 _stow+=(
   'stow' "${stow_flags[@]}" '-d' "$mountpoint"
   '-t' "$stow_target" '.'

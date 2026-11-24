@@ -6,7 +6,7 @@
 
 stdenvNoCC.mkDerivation {
   pname = "cryptsetup-stow";
-  version = "0.1.3";
+  version = "0.1.4";
 
   src = ./.;
   nativeBuildInputs = with pkgs; [
@@ -35,6 +35,7 @@ stdenvNoCC.mkDerivation {
           pkgs.coreutils
           pkgs.stow
           pkgs.gettext
+          pkgs.psmisc
           pkgs.util-linux
           pkgs.gnugrep
         ]
