@@ -17,7 +17,7 @@ while [[ $# -gt 0 ]]; do
   case $1 in
   -f | --sops-file)
     env_file="$2"
-    shift
+    shift 2
     ;;
   --)
     shift
