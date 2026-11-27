@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # vim: set ft=sh:
-set -eou pipefail
+set -euo pipefail
 
 src="$DATA_PATH/$1.img"
 if [[ ! -f "$src" ]]; then
@@ -14,9 +14,11 @@ if [[ -z "$loop_device" ]]; then
   exit 1
 fi
 
-if ! mountpoint=$(
+mountpoint=$(
   lsblk "$loop_device" -Q 'MOUNTPOINT' -np -o MOUNTPOINT
-); then
+)
+if [[ -z "$mountpoint" ]]; then
+  echo "no mountpoint found for loop device." >&2
   exit 1
 fi
 
@@ -30,11 +32,13 @@ if fuser -s -m "$mountpoint"; then
 fi
 
 if ! umount "$mountpoint"; then
+  echo "failed to umount." >&2
   exit 1
 fi
 
 target_name="$UTILITIES_CRYPTSETUP_PREFIX$1"
 if ! cryptsetup close "$target_name"; then
+  echo "failed close device." >&2
   exit 1
 fi
 
